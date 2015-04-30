@@ -136,7 +136,7 @@ public class Javelin extends JFrame {
 		this.setSize(640, 480);
 		this.setVisible(true);
 		
-		doGo("http://localhost:80");
+		doGo("http://localhost:80/index.html");
 	}
 
 	private void doGo(String ul) {
