@@ -33,22 +33,22 @@
     <import plugin="org.jnode.log4j"/>
   </requires>
   
+  
+
   <runtime>
     <library name="jnode-gui.jar">
-      <export name="org.jnode.awt.*"/>
-      <export name="org.jnode.awt.font.*"/>
-      <export name="org.jnode.awt.geom.*"/>
-      <export name="org.jnode.awt.image.*"/>
-      <export name="org.jnode.awt.util.*"/>
+      <export name="org.jnode.awt.*" />
+      <export name="org.jnode.awt.font.*" />
+      <export name="org.jnode.awt.geom.*" />
+      <export name="org.jnode.awt.image.*" />
+      <export name="org.jnode.awt.util.*" />
     </library>
-  </runtime>
-
-  <extension point="org.jnode.security.permissions">
+  </runtime><extension point="org.jnode.security.permissions">
     <permission class="java.security.AllPermission"/>
     <permission class="java.util.PropertyPermission" name="jnode.awt.device" actions="read,write"/>
     <permission class="java.util.PropertyPermission" name="jnode.desktop" actions="read"/>
     <permission class="java.util.PropertyPermission" name="gnu.awt.dispatchthread.priority" actions="read"/>
-    <permission class="java.util.PropertyPermission" name="gnu.javax.swing.DebugGraphics" actions="read"/>  
-  </extension>
+    <permission class="java.util.PropertyPermission" name="gnu.javax.swing.DebugGraphics" actions="read"/>
+    <permission class="java.awt.AWTPermission" name="accessEventQueue"></permission></extension>
         
 </plugin>
