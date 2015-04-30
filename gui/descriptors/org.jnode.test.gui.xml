@@ -47,6 +47,7 @@
     <application name="Swing test"     class="org.jnode.test.gui.SwingTest"/>
     <application name="Swing menu test" class="org.jnode.test.gui.SwingMenuTest"/>
     <application name="Console"        class="org.jnode.test.gui.ConsoleTest"/>
+	<application name="Javelin"        class="org.jnode.test.gui.Javelin"/>
     <!-- application name="Thinlet"        class="thinlet.ThinTest"/ -->
     <!-- application name="GlyphTest"      class="org.jnode.test.gui.GlyphTest"/ -->
   </extension>
@@ -78,6 +79,7 @@
     <alias name="ThinTest"      class="thinlet.ThinTest"/>
     <alias name="GlyphTest"     class="org.jnode.test.gui.GlyphTest"/>
     <alias name="RobotTest"     class="org.jnode.test.gui.RobotTest"/>
+	<alias name="Javelin"       class="org.jnode.test.gui.Javelin"/>
   </extension>
         
   <extension point="org.jnode.shell.syntaxes">
