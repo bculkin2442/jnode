@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Editor.java 5958 2013-02-17 21:24:01Z lsantha $
  *
- * Copyright (C) 2003-2015 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,6 +24,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +32,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -43,6 +47,9 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
+import javax.swing.text.Document; 
+import javax.swing.text.BadLocationException; 
+import java.awt.event.ActionEvent; 
 import org.apache.log4j.Logger;
 
 /**
@@ -55,7 +62,8 @@ public class Editor extends JFrame {
     private JFileChooser fc;
     private String directory;
     private File file;
-
+	private String text;
+	
     public Editor(File file) {
         super("JNote");
         this.file = file;
@@ -65,6 +73,7 @@ public class Editor extends JFrame {
         setJMenuBar(createMenu());
         panel.setLayout(new BorderLayout());
         textArea = new JTextArea();
+		textArea.registerKeyboardAction(new AutoIndentAction(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), JComponent.WHEN_FOCUSED);
         JScrollPane sp = new JScrollPane(textArea);
         sp.setViewportBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         panel.add(sp, BorderLayout.CENTER);
@@ -86,7 +95,8 @@ public class Editor extends JFrame {
         JMenu file = new JMenu("File");
         file.setMnemonic('F');
         JMenuItem new_ = new JMenuItem("New");
-        new_.setMnemonic('N');
+		new_.setMnemonic('N');
+        new_.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         new_.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new_();
@@ -95,7 +105,8 @@ public class Editor extends JFrame {
         file.add(new_);
         file.addSeparator();
         JMenuItem open = new JMenuItem("Open...");
-        open.setMnemonic('O');
+		open.setMnemonic('O');
+        open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         open.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 open();
@@ -103,7 +114,8 @@ public class Editor extends JFrame {
         });
         file.add(open);
         JMenuItem save = new JMenuItem("Save");
-        save.setMnemonic('S');
+		save.setMnemonic('S');
+        save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 save();
@@ -120,7 +132,8 @@ public class Editor extends JFrame {
         file.add(saveAs);
         file.addSeparator();
         JMenuItem exit = new JMenuItem("Exit");
-        exit.setMnemonic('x');
+		exit.setMnemonic('X');
+        exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         exit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 exit();
@@ -128,7 +141,36 @@ public class Editor extends JFrame {
         });
         file.add(exit);
         mb.add(file);
-        return mb;
+        
+		JMenu edit = new JMenu("Edit");
+		JMenuItem copy = new JMenuItem("Copy");
+		copy.setMnemonic('C');
+		copy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+		copy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				copy();
+			}
+		});
+		edit.add(copy);
+		JMenuItem cut = new JMenuItem("Cut");
+		cut.setMnemonic('X');
+		cut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+		cut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cut();
+			}
+		});
+		edit.add(cut);
+		JMenuItem paste = new JMenuItem("Paste");
+		paste.setMnemonic('P');
+		paste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+		paste.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				paste();
+			}
+		});
+		edit.add(paste);
+		return mb;
     }
 
     private void new_() {
@@ -228,6 +270,21 @@ public class Editor extends JFrame {
         setTitle("JNote - " + title);
     }
 
+	private void copy() {
+		text = textArea.getSelectedText();
+	}
+	
+	private void cut() {
+		text = textArea.getSelectedText();
+		textArea.replaceRange("", textArea.getSelectionStart(), textArea.getSelectionEnd());
+	}
+	
+	private void paste() {
+		if(text != null) {
+			textArea.insert(text, textArea.getCaretPosition());
+		}
+	}
+	
     static void editFile(File file) {
         Editor ed = new Editor(file);
         ed.setVisible(true);
@@ -236,4 +293,51 @@ public class Editor extends JFrame {
     public static void main(String[] argv) {
         editFile(null);
     }
+	
+	public static class AutoIndentAction extends AbstractAction { 
+		public void actionPerformed(ActionEvent ae) { 
+			JTextArea comp = (JTextArea)ae.getSource(); 
+			Document doc = comp.getDocument(); 
+	 
+			if(!comp.isEditable()) 
+				return; 
+			try { 
+				int line = comp.getLineOfOffset(comp.getCaretPosition()); 
+	 
+				int start = comp.getLineStartOffset(line); 
+				int end = comp.getLineEndOffset(line); 
+				String str = doc.getText(start, end - start - 1); 
+				String whiteSpace = getLeadingWhiteSpace(str); 
+				doc.insertString(comp.getCaretPosition(), '\n' + whiteSpace, null); 
+			} catch(BadLocationException ex) { 
+				try { 
+					doc.insertString(comp.getCaretPosition(), "\n", null); 
+				} catch(BadLocationException ignore) { 
+					// ignore 
+				} 
+			} 
+		} 
+	 
+		/** 
+		 *  Returns leading white space characters in the specified string. 
+		 */ 
+		private String getLeadingWhiteSpace(String str) { 
+			return str.substring(0, getLeadingWhiteSpaceWidth(str)); 
+		} 
+	 
+		/** 
+		 *  Returns the number of leading white space characters in the specified string. 
+		 */ 
+		private int getLeadingWhiteSpaceWidth(String str) { 
+			int whitespace = 0; 
+			while(whitespace<str.length()) { 
+				char ch = str.charAt(whitespace); 
+				if(ch==' ' || ch=='\t') 
+					whitespace++; 
+				else 
+					break; 
+			} 
+			return whitespace; 
+		} 
+	} 
 }
