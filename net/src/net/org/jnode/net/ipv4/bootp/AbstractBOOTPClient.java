@@ -22,6 +22,7 @@ package org.jnode.net.ipv4.bootp;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.Inet4Address;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;

@@ -41,7 +41,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
     private InetAddress inetAddress;
 
     public static final IPv4Address ANY = new IPv4Address("0.0.0.0");
-    public static final IPv4Address BROADCAST = new IPv4Address("255.255.255.255");
+    public static final IPv4Address BROADCAST = new IPv4Address("255.255.255.0");
 
     private static final IPv4Address DEFAULT_ANY_SUBNETMASK = new IPv4Address("0.0.0.0");
     private static final IPv4Address DEFAULT_CLASS_A_SUBNETMASK = new IPv4Address("255.0.0.0");
